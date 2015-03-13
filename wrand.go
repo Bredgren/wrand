@@ -16,7 +16,7 @@ type Item interface {
 	CumWeightIs(int)
 }
 
-// The Object type is the collection that holds all the items choos from.
+// The Object type is the collection that holds all the items choose from.
 type Object struct {
 	pool itemPool
 	totalWeight int
@@ -29,8 +29,7 @@ func NewObject(inverse bool) *Object {
 	return &Object{make(itemPool, 0),  0, inverse}
 }
 
-// NewItem adds a new Item to the Object with ithe given value and weight. It returns
-// a pointer to the newly created Item.
+// NewItem adds a new Item to the Object with ithe given value and weight.
 func (o *Object) NewItem(item Item) {
 	// O(n)
 	o.pool = append(o.pool, item)
@@ -65,8 +64,8 @@ func (o *Object) update() {
 	sort.Sort(o.pool)
 }
 
-// RandomItem returns a printer to a random Item out of the ones that have been added
-// via NewItem taking into account the weights of each item.
+// RandomItem returns a random Item out of the ones that have been added via NewItem
+// taking into account the weights of each item.
 func (o *Object) RandomItem() Item {
 	// O(log n)
 	rnd := int(rand.Float64() * float64(o.totalWeight))
