@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 )
+
 const count = 100000
 
 func checkFrequency(o *Object, text string) {
@@ -18,17 +19,17 @@ func checkFrequency(o *Object, text string) {
 
 	fmt.Println("Check", text)
 	for v, c := range counts {
-		fmt.Printf(" %s: %f\n", v, float64(c) / count)
+		fmt.Printf(" %s: %f\n", v, float64(c)/count)
 	}
 }
 
 type testItem struct {
-	value string
-	weight int
+	value     string
+	weight    int
 	cumWeight int
 }
 
-func (i *testItem)Weight() int {
+func (i *testItem) Weight() int {
 	return i.weight
 }
 

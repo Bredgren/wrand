@@ -18,15 +18,15 @@ type Item interface {
 
 // The Object type is the collection that holds all the items choose from.
 type Object struct {
-	pool itemPool
+	pool        itemPool
 	totalWeight int
-	inverse bool
+	inverse     bool
 }
 
 // NewObject creates and returns a new Object to work with. If inverse is true then
 // smaller weights are more likely.
 func NewObject(inverse bool) *Object {
-	return &Object{make(itemPool, 0),  0, inverse}
+	return &Object{make(itemPool, 0), 0, inverse}
 }
 
 // NewItem adds a new Item to the Object with ithe given value and weight.
