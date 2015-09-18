@@ -87,3 +87,39 @@ func (p itemPool) Less(i, j int) bool {
 func (p itemPool) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
+
+type Selectable interface {
+	Weight() float64
+}
+
+// Select returns a random item from the given list with a probability corresponding to
+// the relative weights of each item. Each item's Wegiht function will be called once.
+func Select(items []Selectable) Selectable {
+	cumWeights := make([]float64, len(items))
+	cumWeights[0] = items[0].Weight()
+	for i, item := range items {
+		if i > 0 {
+			cumWeights[i] = cumWeights[i - 1] + item.Weight()
+		}
+	}
+
+	// rand.Float64() is strictly less than 1.0 so rnd will never be equal to the total weight.
+	// Therefore SearchFloat64s will always return a valid index.
+	rnd := rand.Float64() * cumWeights[len(items)-1]
+	return items[sort.SearchFloat64s(cumWeights, rnd)]
+}
+
+// SelectIndex takes a list of weights and returns an index with a probability corresponding
+// to the relative weight of each index.
+func SelectIndex(weights []float64) int {
+	cumWeights := make([]float64, len(weights))
+	cumWeights[0] = weights[0]
+	for i, w := range weights {
+		if i > 0 {
+			cumWeights[i] = cumWeights[i - 1] + w
+		}
+	}
+
+	rnd := rand.Float64() * cumWeights[len(weights)-1]
+	return sort.SearchFloat64s(cumWeights, rnd)
+}

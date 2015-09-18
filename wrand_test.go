@@ -98,3 +98,69 @@ func TestWrand(t *testing.T) {
 	nonInverse(t)
 	inverse(t)
 }
+
+type testSelectItem struct {
+	value string
+	weight float64
+}
+
+func (i testSelectItem) Weight() float64 {
+	return i.weight
+}
+
+func TestSelect(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+	list := []Selectable{testSelectItem{"a", 1.0}, testSelectItem{"b", 2.0}}
+	checkSelectFreq(list, "a=1.0, b=2.0")
+
+	list = []Selectable{testSelectItem{"a", 1.0}, testSelectItem{"b", 4.0}}
+	checkSelectFreq(list, "a=1.0, b=4.0")
+
+	list = []Selectable{testSelectItem{"a", 1.0}, testSelectItem{"b", 4.0}, testSelectItem{"c", 2.0}}
+	checkSelectFreq(list, "a=1.0, b=4.0, c=2.0")
+
+	list = []Selectable{testSelectItem{"a", 1.5}, testSelectItem{"b", 2.5}}
+	checkSelectFreq(list, "a=1.5, b=2.5")
+}
+
+func checkSelectFreq(list []Selectable, text string) {
+	counts := make(map[string]int)
+	for i := 0; i < count; i++ {
+		item := Select(list).(testSelectItem)
+		value := item.value
+		counts[value] += 1
+	}
+
+	fmt.Println("Check", text)
+	for v, c := range counts {
+		fmt.Printf(" %s: %f\n", v, float64(c)/count)
+	}
+}
+
+func TestSelectIndex(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+	list := []float64{1.0, 2.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{1.0, 4.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{1.0, 4.0, 2.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{1.5, 2.5}
+	checkSelectIndexFreq(list)
+}
+
+func checkSelectIndexFreq(list []float64) {
+	counts := make(map[int]int)
+	for i := 0; i < count; i++ {
+		index := SelectIndex(list)
+		counts[index] += 1
+	}
+
+	fmt.Println("Check", list)
+	for v, c := range counts {
+		fmt.Printf(" %d: %f\n", v, float64(c)/count)
+	}
+}
