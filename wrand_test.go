@@ -150,6 +150,18 @@ func TestSelectIndex(t *testing.T) {
 
 	list = []float64{1.5, 2.5}
 	checkSelectIndexFreq(list)
+
+	list = []float64{1.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{0.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{0.0, 0.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{0.0, 0.0, 1.0}
+	checkSelectIndexFreq(list)
 }
 
 func checkSelectIndexFreq(list []float64) {

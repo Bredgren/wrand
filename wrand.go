@@ -110,7 +110,8 @@ func Select(items []Selectable) Selectable {
 }
 
 // SelectIndex takes a list of weights and returns an index with a probability corresponding
-// to the relative weight of each index.
+// to the relative weight of each index. Behavior is undefined if len(weights) == 0. A weight
+// of 0 will never be selected unless all are 0, in which case any index may be selected.
 func SelectIndex(weights []float64) int {
 	cumWeights := make([]float64, len(weights))
 	cumWeights[0] = weights[0]
@@ -118,6 +119,10 @@ func SelectIndex(weights []float64) int {
 		if i > 0 {
 			cumWeights[i] = cumWeights[i - 1] + w
 		}
+	}
+
+	if cumWeights[len(weights)-1] == 0.0 {
+		return rand.Intn(len(weights))
 	}
 
 	rnd := rand.Float64() * cumWeights[len(weights)-1]
