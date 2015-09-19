@@ -4,6 +4,7 @@
 package wrand
 
 import (
+	"math"
 	"math/rand"
 	"sort"
 )
@@ -99,7 +100,7 @@ func Select(items []Selectable) Selectable {
 	cumWeights[0] = items[0].Weight()
 	for i, item := range items {
 		if i > 0 {
-			cumWeights[i] = cumWeights[i - 1] + item.Weight()
+			cumWeights[i] = cumWeights[i-1] + item.Weight()
 		}
 	}
 
@@ -112,12 +113,13 @@ func Select(items []Selectable) Selectable {
 // SelectIndex takes a list of weights and returns an index with a probability corresponding
 // to the relative weight of each index. Behavior is undefined if len(weights) == 0. A weight
 // of 0 will never be selected unless all are 0, in which case any index may be selected.
+// Negative weights are multiplied by -1.
 func SelectIndex(weights []float64) int {
 	cumWeights := make([]float64, len(weights))
 	cumWeights[0] = weights[0]
 	for i, w := range weights {
 		if i > 0 {
-			cumWeights[i] = cumWeights[i - 1] + w
+			cumWeights[i] = cumWeights[i-1] + math.Abs(w)
 		}
 	}
 

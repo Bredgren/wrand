@@ -100,7 +100,7 @@ func TestWrand(t *testing.T) {
 }
 
 type testSelectItem struct {
-	value string
+	value  string
 	weight float64
 }
 
@@ -161,6 +161,9 @@ func TestSelectIndex(t *testing.T) {
 	checkSelectIndexFreq(list)
 
 	list = []float64{0.0, 0.0, 1.0}
+	checkSelectIndexFreq(list)
+
+	list = []float64{-1.0, -1.0}
 	checkSelectIndexFreq(list)
 }
 
