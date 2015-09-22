@@ -9,6 +9,27 @@ import (
 	"sort"
 )
 
+// SelectIndex takes a list of weights and returns an index with a probability corresponding
+// to the relative weight of each index. Behavior is undefined if len(weights) == 0. A weight
+// of 0 will never be selected unless all are 0, in which case any index may be selected.
+// Negative weights are multiplied by -1.
+func SelectIndex(weights []float64) int {
+	cumWeights := make([]float64, len(weights))
+	cumWeights[0] = weights[0]
+	for i, w := range weights {
+		if i > 0 {
+			cumWeights[i] = cumWeights[i-1] + math.Abs(w)
+		}
+	}
+
+	if cumWeights[len(weights)-1] == 0.0 {
+		return rand.Intn(len(weights))
+	}
+
+	rnd := rand.Float64() * cumWeights[len(weights)-1]
+	return sort.SearchFloat64s(cumWeights, rnd)
+}
+
 // The Item type holds the user's value
 type Item interface {
 	Weight() int
@@ -37,8 +58,8 @@ func (o *Object) NewItem(item Item) {
 	o.update()
 }
 
-// updateItemWeight, as the name suggests, sets the given Item's weight to the value
-// provided. You should use this instead of setting the Item's weight yourself.
+// UpdateItemWeight sets the given Item's weight to the value provided. You should use
+// this instead of setting the Item's weight yourself.
 func (o *Object) UpdateItemWeight(item Item, weight int) {
 	// O(n)
 	item.WeightIs(weight)
@@ -87,46 +108,4 @@ func (p itemPool) Less(i, j int) bool {
 
 func (p itemPool) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
-}
-
-type Selectable interface {
-	Weight() float64
-}
-
-// Select returns a random item from the given list with a probability corresponding to
-// the relative weights of each item. Each item's Wegiht function will be called once.
-func Select(items []Selectable) Selectable {
-	cumWeights := make([]float64, len(items))
-	cumWeights[0] = items[0].Weight()
-	for i, item := range items {
-		if i > 0 {
-			cumWeights[i] = cumWeights[i-1] + item.Weight()
-		}
-	}
-
-	// rand.Float64() is strictly less than 1.0 so rnd will never be equal to the total weight.
-	// Therefore SearchFloat64s will always return a valid index.
-	rnd := rand.Float64() * cumWeights[len(items)-1]
-	return items[sort.SearchFloat64s(cumWeights, rnd)]
-}
-
-// SelectIndex takes a list of weights and returns an index with a probability corresponding
-// to the relative weight of each index. Behavior is undefined if len(weights) == 0. A weight
-// of 0 will never be selected unless all are 0, in which case any index may be selected.
-// Negative weights are multiplied by -1.
-func SelectIndex(weights []float64) int {
-	cumWeights := make([]float64, len(weights))
-	cumWeights[0] = weights[0]
-	for i, w := range weights {
-		if i > 0 {
-			cumWeights[i] = cumWeights[i-1] + math.Abs(w)
-		}
-	}
-
-	if cumWeights[len(weights)-1] == 0.0 {
-		return rand.Intn(len(weights))
-	}
-
-	rnd := rand.Float64() * cumWeights[len(weights)-1]
-	return sort.SearchFloat64s(cumWeights, rnd)
 }
